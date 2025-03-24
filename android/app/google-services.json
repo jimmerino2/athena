@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "594890025186",
+    "project_id": "career-gem",
+    "storage_bucket": "career-gem.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594890025186:android:748a34da28e23c1ce8d6bb",
+        "android_client_info": {
+          "package_name": "com.example.career_gem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2q6n88HkIeblTV1VqvQ-561cBHJd0H04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
