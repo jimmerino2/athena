@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^3.12.1
   cloud_firestore: ^5.6.5
+  flutter_native_splash: ^2.4.5
 
 dev_dependencies:
   flutter_test:
@@ -57,11 +58,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -88,3 +86,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#ffffff" # Background color
+  image: assets/images/icon.png # Path to your splash image
+  android_12:
+    image: assets/images/icon.png
+    color: "#ffffff"
+  fullscreen: true
