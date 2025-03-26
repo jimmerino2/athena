@@ -12,7 +12,7 @@ class Home extends StatelessWidget {
       stream: AuthService().userStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading');
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return const Center(child: Text('error'));
         } else if (snapshot.hasData) {
