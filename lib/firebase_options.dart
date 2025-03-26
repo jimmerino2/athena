@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '594890025186',
     projectId: 'career-gem',
     storageBucket: 'career-gem.firebasestorage.app',
+    androidClientId: '594890025186-1mr1t8kb96utdkhhskp26co614a8im2j.apps.googleusercontent.com',
+    iosClientId: '594890025186-kjbhgm608ikhn3k47fcc3r419t60iptm.apps.googleusercontent.com',
     iosBundleId: 'com.example.careerGem',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '594890025186',
     projectId: 'career-gem',
     storageBucket: 'career-gem.firebasestorage.app',
+    androidClientId: '594890025186-1mr1t8kb96utdkhhskp26co614a8im2j.apps.googleusercontent.com',
+    iosClientId: '594890025186-kjbhgm608ikhn3k47fcc3r419t60iptm.apps.googleusercontent.com',
     iosBundleId: 'com.example.careerGem',
   );
 
@@ -85,4 +89,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'career-gem.firebasestorage.app',
     measurementId: 'G-CB8FR9C8K5',
   );
+
 }
