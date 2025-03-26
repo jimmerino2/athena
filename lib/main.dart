@@ -1,3 +1,4 @@
+import 'package:athena/pages/questions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -55,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MyHomePage(title: "Athena")),
+        MaterialPageRoute(builder: (context) => QuestionScreen(title: "Athena")),
       );
     });
   }
