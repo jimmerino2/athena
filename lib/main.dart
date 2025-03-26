@@ -1,4 +1,3 @@
-import 'package:athena/questions/questions.dart';
 import 'package:athena/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

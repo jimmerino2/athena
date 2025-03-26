@@ -1,10 +1,10 @@
-import 'package:athena/questions/questions.dart';
-import 'package:athena/home/home.dart';
-import 'package:athena/login/login.dart';
-import 'package:athena/profile/profile.dart';
-import 'package:athena/courses/courses.dart';
-import 'package:athena/updates/updates.dart';
-import 'package:athena/saved/saved.dart';
+import 'package:athena/screens/questions/questions.dart';
+import 'package:athena/screens/home/home.dart';
+import 'package:athena/screens/login/login.dart';
+import 'package:athena/screens/profile/profile.dart';
+import 'package:athena/screens/courses/courses.dart';
+import 'package:athena/screens/updates/updates.dart';
+import 'package:athena/screens/saved/saved.dart';
 
 var appRoutes = {
   "/": (context) => const Home(),
