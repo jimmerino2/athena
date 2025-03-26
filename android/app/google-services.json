@@ -12,7 +12,20 @@
           "package_name": "com.example.career_gem"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "594890025186-1mr1t8kb96utdkhhskp26co614a8im2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.career_gem",
+            "certificate_hash": "acb3f84f3d3a66565d55b4b2ab74353ba6af8a11"
+          }
+        },
+        {
+          "client_id": "594890025186-binq5nckpbojjb50438k8l94p2lce0ao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB2q6n88HkIeblTV1VqvQ-561cBHJd0H04"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594890025186-binq5nckpbojjb50438k8l94p2lce0ao.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "594890025186-kjbhgm608ikhn3k47fcc3r419t60iptm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.careerGem"
+              }
+            }
+          ]
         }
       }
     }
