@@ -32,7 +32,12 @@ class _AppState extends State<App> {
           return MaterialApp(routes: appRoutes);
         }
 
-        return Text('Loading');
+        return Center(
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text('Loading'),
+          ),
+        );
       },
     );
   }

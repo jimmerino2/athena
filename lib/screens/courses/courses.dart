@@ -9,14 +9,25 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Profile')),
-      body: ElevatedButton(
+      body: Column(children: [Expanded(child: CoursesContent())]),
+      bottomNavigationBar: BottomNavBar(),
+    );
+  }
+}
+
+class CoursesContent extends StatelessWidget {
+  const CoursesContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
         onPressed: () async {
           await AuthService().signOut();
           Navigator.of(context).pushNamedAndRemoveUntil("/", (route) => false);
         },
-        child: Text('signout'),
+        child: Text('Sign Out'),
       ),
-      bottomNavigationBar: BottomNavBar(),
     );
   }
 }
