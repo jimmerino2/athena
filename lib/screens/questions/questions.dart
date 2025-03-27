@@ -21,6 +21,14 @@ class QuestionScreen extends StatelessWidget {
                 child: Text('Courses'),
               ),
             ),
+            Flexible(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/gemini');
+                },
+                child: Text('Gemini Testing'),
+              ),
+            ),
           ],
         ),
       ),
