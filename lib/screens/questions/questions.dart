@@ -29,6 +29,14 @@ class QuestionScreen extends StatelessWidget {
                 child: Text('Gemini Testing'),
               ),
             ),
+            Flexible(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/questionPages');
+                },
+                child: Text('Question Basic Pages'),
+              ),
+            ),
           ],
         ),
       ),
