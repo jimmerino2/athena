@@ -4,8 +4,20 @@ import 'package:logger/logger.dart';
 import 'dart:collection';
 
 final logger = Logger();
-List<String> hobbiesList = ["Fishing", "Coffee Making", "Running", "Drone Flying"];
-List<String> subjectList = ["Math", "Science", "English", "Computer Science/ICT", "Business"];
+List<String> hobbiesList = [
+  "Fishing",
+  "Coffee Making",
+  "Running",
+  "Drone Flying",
+];
+List<String> subjectList = [
+  "Math",
+  "Science",
+  "English",
+  "Computer Science/ICT",
+  "Business",
+];
+
 class QuestionScreen extends StatefulWidget {
   const QuestionScreen({super.key});
 
@@ -13,18 +25,20 @@ class QuestionScreen extends StatefulWidget {
   State<QuestionScreen> createState() => QuestionScreenState();
 }
 
-class QuestionScreenState extends State<QuestionScreen> with TickerProviderStateMixin {
+class QuestionScreenState extends State<QuestionScreen>
+    with TickerProviderStateMixin {
   late PageController _pageViewController;
   int _currentPageIndex = 0;
   final int _totalPages = 6;
 
   // Answers
-  final Map<int, dynamic> _answers = SplayTreeMap<int, dynamic>(); 
+  final Map<int, dynamic> _answers = SplayTreeMap<int, dynamic>();
 
   @override
   void initState() {
     super.initState();
     _pageViewController = PageController();
+    _answers[3] ??= {for (var subject in subjectList) subject: ""};
   }
 
   @override
@@ -86,15 +100,55 @@ class QuestionScreenState extends State<QuestionScreen> with TickerProviderState
           PageView(
             controller: _pageViewController,
             children: <Widget>[
-              QuestionWidget(question: "What is your age", type: QuestionType.textField, onAnswerSelected: (answer) => _answers[0] = answer, initialAnswer: _answers[0],),
-              QuestionWidget(question: "Are you a student", type: QuestionType.yesNo, onAnswerSelected: (answer) => _answers[1] = answer, initialAnswer: _answers[1],),
-              QuestionWidget(question: "What is your education level", type: QuestionType.textField, onAnswerSelected: (answer) => _answers[2] = answer, initialAnswer: _answers[2],),
-              QuestionWidget(question: "List your subject and scores", type: QuestionType.multipleTextField,options: subjectList, onAnswerSelected: (answer) => _answers[3] = answer, initialAnswer: _answers[3],),
-              QuestionWidget(question: "List your hobbies and interest", type: QuestionType.multipleChoice,options: hobbiesList, onAnswerSelected: (answer) => _answers[4] = answer, initialAnswer: _answers[4],),
-              QuestionWidget(question: "What is your dream", type: QuestionType.textField, onAnswerSelected: (answer) => _answers[5] = answer, initialAnswer: _answers[5],)
+              QuestionWidget(
+                question: "What is your age",
+                type: QuestionType.textField,
+                onAnswerSelected: (answer) => _answers[0] = answer,
+                initialAnswer: _answers[0],
+                hintText: "Enter your age",
+              ),
+              QuestionWidget(
+                question: "Are you a student",
+                type: QuestionType.yesNo,
+                onAnswerSelected: (answer) => _answers[1] = answer,
+                initialAnswer: _answers[1],
+              ),
+              QuestionWidget(
+                question: "What is your education level",
+                type: QuestionType.textField,
+                onAnswerSelected: (answer) => _answers[2] = answer,
+                initialAnswer: _answers[2],
+                hintText: "Enter your education level",
+              ),
+              QuestionWidget(
+                question: "List your subject and scores",
+                type: QuestionType.multipleTextField,
+                options: _answers[3]?.keys.toList() ?? [],
+                onAnswerSelected: (answer) {
+                  setState(() {
+                    _answers[3] = answer;
+                  });
+                },
+                initialAnswer: _answers[3],
+                hintText: "Add new subjects here",
+              ),
+              QuestionWidget(
+                question: "List your hobbies and interest",
+                type: QuestionType.multipleChoice,
+                options: hobbiesList,
+                onAnswerSelected: (answer) => _answers[4] = answer,
+                initialAnswer: _answers[4],
+                hintText: "Add new hobbies/interest here",
+              ),
+              QuestionWidget(
+                question: "What is your dream",
+                type: QuestionType.textField,
+                onAnswerSelected: (answer) => _answers[5] = answer,
+                initialAnswer: _answers[5],
+              ),
             ],
           ),
-        navigationButtons(),
+          navigationButtons(),
         ],
       ),
     );
@@ -114,8 +168,11 @@ class QuestionScreenState extends State<QuestionScreen> with TickerProviderState
 
           // Next/Submit Button
           ElevatedButton(
-            onPressed: _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
-            child: Text(_currentPageIndex == _totalPages - 1 ? "Submit" : "Next"),
+            onPressed:
+                _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
+            child: Text(
+              _currentPageIndex == _totalPages - 1 ? "Submit" : "Next",
+            ),
           ),
         ],
       ),

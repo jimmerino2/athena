@@ -14,6 +14,7 @@ class QuestionWidget extends StatefulWidget {
   final List<String>? options;
   final Function(dynamic) onAnswerSelected;
   final dynamic initialAnswer;
+  final String? hintText;
 
   const QuestionWidget({
     super.key,
@@ -22,6 +23,7 @@ class QuestionWidget extends StatefulWidget {
     this.options,
     required this.onAnswerSelected,
     this.initialAnswer,
+    this.hintText,
   });
 
   @override
@@ -46,9 +48,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
       for (var option in widget.options!) {
         controllers[option] = TextEditingController(
           text:
-              (selectedAnswer is Map && selectedAnswer.containsKey(option))
-                  ? selectedAnswer[option]
-                  : "",
+              (selectedAnswer is Map && selectedAnswer.containsKey(option))? selectedAnswer[option]: "",
         );
       }
     }
@@ -84,9 +84,9 @@ class QuestionWidgetState extends State<QuestionWidget> {
       case QuestionType.textField:
         return TextField(
           controller: _textController,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Enter your answer...',
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: widget.hintText, 
           ),
           onChanged: (value) {
             setState(() {
@@ -121,44 +121,77 @@ class QuestionWidgetState extends State<QuestionWidget> {
         }
         return StatefulBuilder(
           builder: (context, setState) {
-            return SizedBox(
-              height: 300,
-              child: ListView.builder(
-                itemCount: widget.options?.length ?? 0,
-                itemBuilder: (context, index) {
-                  final option = widget.options![index];
-                  final isSelected = selectedAnswer.contains(option);
+            TextEditingController optionController = TextEditingController();
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          selectedAnswer.remove(option);
-                        } else {
-                          selectedAnswer.add(option);
-                        }
-                      });
-                      widget.onAnswerSelected(selectedAnswer);
+            return Column(
+              children: [
+                SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    itemCount: widget.options!.length,
+                    itemBuilder: (context, index) {
+                      final option = widget.options![index];
+                      final isSelected = selectedAnswer.contains(option);
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              selectedAnswer.remove(option);
+                            } else {
+                              selectedAnswer.add(option);
+                            }
+                          });
+                          widget.onAnswerSelected(selectedAnswer);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.blue : Colors.white,
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isSelected ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                      );
                     },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue : Colors.white,
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: optionController,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            hintText: widget.hintText,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        onPressed: () {
+                          if (optionController.text.isNotEmpty) {
+                            setState(() {
+                              widget.options!.add(optionController.text);
+                            });
+                            optionController.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             );
           },
         );
@@ -166,50 +199,119 @@ class QuestionWidgetState extends State<QuestionWidget> {
       case QuestionType.multipleTextField:
         return StatefulBuilder(
           builder: (context, setState) {
-            // Ensure selectedAnswer is a Map
             selectedAnswer ??= {};
 
-            if (widget.options == null || widget.options!.isEmpty) {
-              return const Text("No options available");
+            // Ensure pre-provided subjects (from widget.options) are included
+            if (widget.options != null) {
+              for (var subject in widget.options!) {
+                selectedAnswer.putIfAbsent(
+                  subject,
+                  () => "",
+                ); // Initialize empty score
+                controllers.putIfAbsent(
+                  subject,
+                  () => TextEditingController(text: selectedAnswer[subject]),
+                );
+              }
             }
 
-            return SizedBox(
-              height: 300,
-              child: ListView.builder(
-                itemCount: widget.options?.length ?? 0, // Fix null issue
-                itemBuilder: (context, index) {
-                  String option = widget.options![index];
+            TextEditingController subjectController = TextEditingController();
 
-                  controllers.putIfAbsent(
-                    option,
-                    () => TextEditingController(
-                      text: selectedAnswer[option] ?? "",
-                    ),
-                  );
+            // Convert keys to a fixed list order
+            List<String> subjectsList =
+                (selectedAnswer is Map)
+                    ? selectedAnswer.keys.whereType<String>().toList()
+                    : [];
+            return Column(
+              children: [
+                // Scrollable area for subjects
+                SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    itemCount: subjectsList.length,
+                    itemBuilder: (context, index) {
+                      String subject = subjectsList[index];
 
-                  return ListTile(
-                    title: Row(
-                      children: [
-                        Expanded(child: Text(option)),
-                        const SizedBox(width: 10),
-                        SizedBox(
-                          width: 100,
-                          child: TextField(
-                            controller: controllers[option],
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                      controllers.putIfAbsent(
+                        subject,
+                        () => TextEditingController(
+                          text: selectedAnswer[subject],
+                        ),
+                      );
+
+                      return ListTile(
+                        title: Row(
+                          children: [
+                            Expanded(child: Text(subject)),
+                            const SizedBox(width: 10),
+                            SizedBox(
+                              width: 100,
+                              child: TextField(
+                                controller: controllers[subject],
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                                onChanged: (value) {
+                                  selectedAnswer[subject] = value;
+                                  widget.onAnswerSelected(selectedAnswer);
+                                },
+                              ),
                             ),
-                            onChanged: (value) {
-                              selectedAnswer[option] = value;
-                              widget.onAnswerSelected(selectedAnswer);
-                            },
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  selectedAnswer.remove(subject);
+                                  controllers.remove(subject);
+                                });
+                                widget.onAnswerSelected(selectedAnswer);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // Input field to add new subjects
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: subjectController,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            hintText: widget.hintText,
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        onPressed: () {
+                          if (subjectController.text.isNotEmpty) {
+                            String newSubject = subjectController.text.trim();
+                            if (!selectedAnswer.containsKey(newSubject)) {
+                              setState(() {
+                                selectedAnswer[newSubject] = "";
+                                controllers[newSubject] =
+                                    TextEditingController();
+                                widget.onAnswerSelected(selectedAnswer);
+                              });
+                            }
+                            subjectController.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             );
           },
         );
@@ -218,39 +320,43 @@ class QuestionWidgetState extends State<QuestionWidget> {
         return StatefulBuilder(
           builder: (context, setState) {
             return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                backgroundColor: selectedAnswer == "yes" ? Colors.blue : null,
-                foregroundColor: selectedAnswer == "yes" ? Colors.white : Colors.black,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        selectedAnswer == "yes" ? Colors.blue : null,
+                    foregroundColor:
+                        selectedAnswer == "yes" ? Colors.white : Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      selectedAnswer = "yes";
+                    });
+                    widget.onAnswerSelected("yes");
+                  },
+                  child: const Text("Yes"),
                 ),
-                onPressed: () {
-                  setState(() {
-                    selectedAnswer = "yes";
-                  });
-                  widget.onAnswerSelected("yes");
-                },
-                child: const Text("Yes"),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedAnswer == "no" ? Colors.blue: null,
-                  foregroundColor: selectedAnswer == "no" ? Colors.white : Colors.black,
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        selectedAnswer == "no" ? Colors.blue : null,
+                    foregroundColor:
+                        selectedAnswer == "no" ? Colors.white : Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      selectedAnswer = "no";
+                    });
+                    widget.onAnswerSelected("no");
+                  },
+                  child: const Text("No"),
                 ),
-                onPressed: () {
-                  setState(() {
-                    selectedAnswer = "no";
-                  });
-                  widget.onAnswerSelected("no");
-                },
-                child: const Text("No"),
-              ),
-            ],
-          );
-        },
-      );
+              ],
+            );
+          },
+        );
     }
   }
 }
