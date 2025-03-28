@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 enum QuestionType {
   textField,
   dropdown,
@@ -15,6 +15,7 @@ class QuestionWidget extends StatefulWidget {
   final Function(dynamic) onAnswerSelected;
   final dynamic initialAnswer;
   final String? hintText;
+  final List<TextInputFormatter>? format;
 
   const QuestionWidget({
     super.key,
@@ -24,6 +25,7 @@ class QuestionWidget extends StatefulWidget {
     required this.onAnswerSelected,
     this.initialAnswer,
     this.hintText,
+    this.format,
   });
 
   @override
@@ -48,7 +50,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
       for (var option in widget.options!) {
         controllers[option] = TextEditingController(
           text:
-              (selectedAnswer is Map && selectedAnswer.containsKey(option))? selectedAnswer[option]: "",
+              (selectedAnswer is Map && selectedAnswer.containsKey(option))? selectedAnswer[option] : "",
         );
       }
     }
@@ -71,7 +73,19 @@ class QuestionWidgetState extends State<QuestionWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(widget.question, style: Theme.of(context).textTheme.titleLarge),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40.0,
+              vertical: 12.0,
+            ),
+            child: Text(
+              widget.question,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24, 
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
           _buildQuestionInput(),
         ],
@@ -82,20 +96,24 @@ class QuestionWidgetState extends State<QuestionWidget> {
   Widget _buildQuestionInput() {
     switch (widget.type) {
       case QuestionType.textField:
-        return TextField(
-          controller: _textController,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            hintText: widget.hintText, 
-          ),
-          onChanged: (value) {
-            setState(() {
-              selectedAnswer = value;
-            });
-            widget.onAnswerSelected(value);
-          },
+        return Column(
+          children: [
+            TextField(
+              controller: _textController,
+              inputFormatters: widget.format, 
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: widget.hintText,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  selectedAnswer = value;
+                });
+                widget.onAnswerSelected(value);
+              },
+            ),
+          ],
         );
-
       case QuestionType.dropdown:
         return DropdownButtonFormField<String>(
           value: selectedAnswer,
@@ -122,46 +140,48 @@ class QuestionWidgetState extends State<QuestionWidget> {
         return StatefulBuilder(
           builder: (context, setState) {
             TextEditingController optionController = TextEditingController();
-
             return Column(
               children: [
-                SizedBox(
-                  height: 250,
-                  child: ListView.builder(
-                    itemCount: widget.options!.length,
-                    itemBuilder: (context, index) {
-                      final option = widget.options![index];
-                      final isSelected = selectedAnswer.contains(option);
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                  child: SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      itemCount: widget.options!.length,
+                      itemBuilder: (context, index) {
+                        final option = widget.options![index];
+                        final isSelected = selectedAnswer.contains(option);
 
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              selectedAnswer.remove(option);
-                            } else {
-                              selectedAnswer.add(option);
-                            }
-                          });
-                          widget.onAnswerSelected(selectedAnswer);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.blue : Colors.white,
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            option,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: isSelected ? Colors.white : Colors.black,
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (isSelected) {
+                                selectedAnswer.remove(option);
+                              } else {
+                                selectedAnswer.add(option);
+                              }
+                            });
+                            widget.onAnswerSelected(selectedAnswer);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isSelected ? Colors.blue : Colors.white,
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              option,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: isSelected ? Colors.white : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Padding(
@@ -178,7 +198,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        icon: const Icon(Icons.add_circle),
                         onPressed: () {
                           if (optionController.text.isNotEmpty) {
                             setState(() {
@@ -201,58 +221,55 @@ class QuestionWidgetState extends State<QuestionWidget> {
           builder: (context, setState) {
             selectedAnswer ??= {};
 
-            // Ensure pre-provided subjects (from widget.options) are included
             if (widget.options != null) {
-              for (var subject in widget.options!) {
+              for (var title in widget.options!) {
                 selectedAnswer.putIfAbsent(
-                  subject,
+                  title,
                   () => "",
                 ); // Initialize empty score
                 controllers.putIfAbsent(
-                  subject,
-                  () => TextEditingController(text: selectedAnswer[subject]),
+                  title,
+                  () => TextEditingController(text: selectedAnswer[title]),
                 );
               }
             }
 
-            TextEditingController subjectController = TextEditingController();
+            TextEditingController titleController = TextEditingController();
 
-            // Convert keys to a fixed list order
-            List<String> subjectsList =
+            List<String> titleList =
                 (selectedAnswer is Map)
                     ? selectedAnswer.keys.whereType<String>().toList()
                     : [];
             return Column(
               children: [
-                // Scrollable area for subjects
                 SizedBox(
                   height: 250,
                   child: ListView.builder(
-                    itemCount: subjectsList.length,
+                    itemCount: titleList.length,
                     itemBuilder: (context, index) {
-                      String subject = subjectsList[index];
+                      String title = titleList[index];
 
                       controllers.putIfAbsent(
-                        subject,
+                        title,
                         () => TextEditingController(
-                          text: selectedAnswer[subject],
+                          text: selectedAnswer[title],
                         ),
                       );
 
                       return ListTile(
                         title: Row(
                           children: [
-                            Expanded(child: Text(subject)),
+                            Expanded(child: Text(title)),
                             const SizedBox(width: 10),
                             SizedBox(
                               width: 100,
                               child: TextField(
-                                controller: controllers[subject],
+                                controller: controllers[title],
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                 ),
                                 onChanged: (value) {
-                                  selectedAnswer[subject] = value;
+                                  selectedAnswer[title] = value;
                                   widget.onAnswerSelected(selectedAnswer);
                                 },
                               ),
@@ -260,12 +277,12 @@ class QuestionWidgetState extends State<QuestionWidget> {
                             IconButton(
                               icon: const Icon(
                                 Icons.remove_circle,
-                                color: Colors.red,
+                                //color: Colors.red,
                               ),
                               onPressed: () {
                                 setState(() {
-                                  selectedAnswer.remove(subject);
-                                  controllers.remove(subject);
+                                  selectedAnswer.remove(title);
+                                  controllers.remove(title);
                                 });
                                 widget.onAnswerSelected(selectedAnswer);
                               },
@@ -276,15 +293,13 @@ class QuestionWidgetState extends State<QuestionWidget> {
                     },
                   ),
                 ),
-
-                // Input field to add new subjects
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: subjectController,
+                          controller: titleController,
                           decoration: InputDecoration(
                             border: const OutlineInputBorder(),
                             hintText: widget.hintText,
@@ -292,19 +307,22 @@ class QuestionWidgetState extends State<QuestionWidget> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        icon: const Icon(
+                          Icons.add_circle,
+                          //color: Colors.green,
+                          ),
                         onPressed: () {
-                          if (subjectController.text.isNotEmpty) {
-                            String newSubject = subjectController.text.trim();
-                            if (!selectedAnswer.containsKey(newSubject)) {
+                          if (titleController.text.isNotEmpty) {
+                            String newTitle = titleController.text.trim();
+                            if (!selectedAnswer.containsKey(newTitle)) {
                               setState(() {
-                                selectedAnswer[newSubject] = "";
-                                controllers[newSubject] =
+                                selectedAnswer[newTitle] = "";
+                                controllers[newTitle] =
                                     TextEditingController();
                                 widget.onAnswerSelected(selectedAnswer);
                               });
                             }
-                            subjectController.clear();
+                            titleController.clear();
                           }
                         },
                       ),
@@ -324,10 +342,10 @@ class QuestionWidgetState extends State<QuestionWidget> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selectedAnswer == "yes" ? Colors.blue : null,
-                    foregroundColor:
-                        selectedAnswer == "yes" ? Colors.white : Colors.black,
+                    minimumSize: const Size(100, 40),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    backgroundColor: selectedAnswer == "yes" ? Colors.blue : null,
+                    foregroundColor: selectedAnswer == "yes" ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
                     setState(() {
@@ -340,10 +358,10 @@ class QuestionWidgetState extends State<QuestionWidget> {
                 const SizedBox(width: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selectedAnswer == "no" ? Colors.blue : null,
-                    foregroundColor:
-                        selectedAnswer == "no" ? Colors.white : Colors.black,
+                    minimumSize: const Size(100, 40),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    backgroundColor: selectedAnswer == "no" ? Colors.blue : null,
+                    foregroundColor: selectedAnswer == "no" ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
                     setState(() {

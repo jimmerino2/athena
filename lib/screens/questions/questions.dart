@@ -1,5 +1,6 @@
 import 'package:athena/screens/questions/forms.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'dart:collection';
 
@@ -106,6 +107,7 @@ class QuestionScreenState extends State<QuestionScreen>
                 onAnswerSelected: (answer) => _answers[0] = answer,
                 initialAnswer: _answers[0],
                 hintText: "Enter your age",
+                format: [FilteringTextInputFormatter.digitsOnly],
               ),
               QuestionWidget(
                 question: "Are you a student",
@@ -145,6 +147,7 @@ class QuestionScreenState extends State<QuestionScreen>
                 type: QuestionType.textField,
                 onAnswerSelected: (answer) => _answers[5] = answer,
                 initialAnswer: _answers[5],
+                hintText: "Enter your dream",
               ),
             ],
           ),
@@ -156,22 +159,30 @@ class QuestionScreenState extends State<QuestionScreen>
 
   Widget navigationButtons() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(50.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Previous Button
           ElevatedButton(
             onPressed: _currentPageIndex == 0 ? null : _prevPage,
-            child: const Text("Previous"),
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(12),
+            ),
+            child: const Icon(Icons.arrow_back),
           ),
-
           // Next/Submit Button
           ElevatedButton(
-            onPressed:
-                _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
-            child: Text(
-              _currentPageIndex == _totalPages - 1 ? "Submit" : "Next",
+            onPressed: _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(12),
+            ),
+            child: Icon(
+              _currentPageIndex == _totalPages - 1
+                  ? Icons.check
+                  : Icons.arrow_forward,
             ),
           ),
         ],
