@@ -20,6 +20,37 @@ class FirestoreService {
     }
   }
 
+  Future<void> addResults({
+    required String uid,
+    DateTime? dateTime,
+    bool isStudent = false,
+    String? educationLevel,
+    List? educationScore,
+    List? interests,
+    String? dream,
+    List? suggestions,
+    String? chosenJob,
+  }) async {
+    try {
+      if (uid.isNotEmpty) {
+        await db.collection('users').doc(uid).set({
+          'dateTime': dateTime,
+          'isStudent': isStudent,
+          'educationLevel': educationLevel,
+          'educationScore': educationScore,
+          'interests': interests,
+          'dream': dream,
+          'suggestions': suggestions,
+          'chosenJob': chosenJob,
+        }, SetOptions(merge: true));
+      } else {
+        print('User ID or name is empty');
+      }
+    } catch (e) {
+      print('error adding user $e');
+    }
+  }
+
   Future<String> getChosenJob(String uid) async {
     try {
       final docRef = db.collection("quizzes").doc(uid);
