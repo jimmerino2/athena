@@ -16,15 +16,31 @@ import 'package:url_launcher/url_launcher.dart';
 //   }
 // }
 
+class Course {
+  final String title;
+  final String author;
+  final String description;
+  final String url;
+
+  Course({required this.title, required this.author, required this.description, required this.url});
+
+  factory Course.fromList(List<String> list) => Course(
+    title: list[0],
+    author: list[1],
+    description: list[2],
+    url: list[3],
+  );
+}
+
 class CoursesRepository {
   static final model = GenerativeModel(
     model: 'gemini-1.5-flash-latest',
     apiKey: 'AIzaSyD2Vi6H-b2WpI7wqGNerCtPeFJRws65JEc',
   );
 
-  static Future<List<List<String>>>? _courses;
+  static Future<List<Course>>? _courses;
 
-  static Future<List<List<String>>> _fetchCourses() async {
+  static Future<List<Course>> _fetchCourses() async {
     String job = "Software Engineer";
     String prompt = "Provide a list of REAL online courses a student interested in becoming a $job could take, in JSON format. The JSON should be an array of arrays, where each inner array represents a course and contains the following elements in order: Title, Author, Summary description, URL to the course. Do not add any comments";
     final content = [Content.text(prompt)];
@@ -37,16 +53,16 @@ class CoursesRepository {
       return Future.error("Response text formatted incorrectly");
     }
     final jsonText = match.group(1)!.trim();
-    return (jsonDecode(jsonText) as List).map((e) => List<String>.from(e)).toList();
+    return (jsonDecode(jsonText) as List).map((e) => Course.fromList(List<String>.from(e))).toList();
   }
 
-  static Future<List<List<String>>> fetchCourses() {
+  static Future<List<Course>> fetchCourses() {
     _courses ??= _fetchCourses();
 
     return _courses!;
   }
 
-  static Future<List<List<String>>> refreshCourses() {
+  static Future<List<Course>> refreshCourses() {
     _courses = _fetchCourses();
     return _courses!;
   }
@@ -92,19 +108,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
               // handle error
               return Text("Error: ${snapshot.error}");
             } else {
-              List<List<String>> courses = snapshot.data!;
+              List<Course> courses = snapshot.data!;
               return Expanded(
                 child: ListView.builder(
                   itemCount: courses.length,
                   itemBuilder: (context, index) {
-                    List<String> course = courses[index];
-                    return LargeCourseCard(
-                      title: course[0], 
-                      subtitle: course[1], 
-                      description: course[2], 
-                      url: course[3], 
-                      // imageUrl: course[4]
-                    );
+                    Course course = courses[index];
+                    return LargeCourseCard(course: course);
                   }
                 ),
               );
@@ -119,13 +129,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
 class LargeCourseCard extends StatelessWidget {
   const LargeCourseCard({
     super.key, 
-    required this.title, required this.subtitle, required this.description, required this.url,
+    required this.course,
   });
 
-  final String title;
-  final String subtitle;
-  final String description;
-  final String url;
+  final Course course;
   // final String imageUrl;
 
   @override
@@ -135,8 +142,8 @@ class LargeCourseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(subtitle),
+            title: Text(course.title, style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(course.author),
           ),
           Container(
             height: 200,
@@ -149,7 +156,7 @@ class LargeCourseCard extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.all(12.0),
-            child: Text(description),
+            child: Text(course.description),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -163,7 +170,7 @@ class LargeCourseCard extends StatelessWidget {
                 Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
                 ElevatedButton(
                   // onPressed: () {},
-                  onPressed: () async => await launchUrl(Uri.parse(url)),
+                  onPressed: () async => await launchUrl(Uri.parse(course.url)),
                   child: Text("Open"),
                 ),
               ],
