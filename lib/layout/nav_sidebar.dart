@@ -1,5 +1,6 @@
 import 'package:athena/screens/courses/courses.dart';
 import 'package:athena/screens/gemini_test/gemini.dart';
+import 'package:athena/screens/questions/questions.dart';
 import 'package:flutter/material.dart';
 
 class NavSidebarLayout extends StatefulWidget {
@@ -10,11 +11,12 @@ class NavSidebarLayout extends StatefulWidget {
 }
 
 class _NavSidebarLayoutState extends State<NavSidebarLayout> {
-  int selectedIndex = 0;
-  final List<Widget> screens = [const CoursesScreen(), const GeminiScreen()];
+  int selectedIndex = 2; //Switch to 2 for debugging purpose, default should be 0
+  final List<Widget> screens = [const CoursesScreen(), const GeminiScreen(), const QuestionScreen()];
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
     {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
+    {'title': "Question/Quizz", 'icon': Icon(Icons.smart_toy)},
   ];
 
   @override

@@ -41,6 +41,7 @@ dependencies:
   google_sign_in: ^6.3.0
   font_awesome_flutter: ^10.8.0
   google_generative_ai: ^0.4.6
+  logger: ^2.5.0
 
 dev_dependencies:
   flutter_test:
