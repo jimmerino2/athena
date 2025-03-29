@@ -17,7 +17,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Scaffold(
       body: IndexedStack(
         index: currentIndex,
-        children: const [CoursesContent(), Placeholder(), Placeholder()],
+        children: [CoursesContent(), Placeholder(), Placeholder()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,

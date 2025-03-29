@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:athena/services/firestore.dart';
 
 class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
@@ -30,6 +31,11 @@ class AuthService {
       );
 
       await FirebaseAuth.instance.signInWithCredential(authCredential);
+
+      FirestoreService().addUser(
+        FirebaseAuth.instance.currentUser!.uid,
+        FirebaseAuth.instance.currentUser!.displayName!,
+      );
     } on FirebaseAuthException catch (e) {
       // handle error
     }

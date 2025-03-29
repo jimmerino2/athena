@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:athena/services/auth.dart';
 
 const apiKey = 'AIzaSyD2Vi6H-b2WpI7wqGNerCtPeFJRws65JEc';
 
@@ -13,6 +14,8 @@ class GeminiScreen extends StatefulWidget {
 class _GeminiScreenState extends State<GeminiScreen> {
   String responseText = "Enter a prompt to generate text.";
   bool isLoading = false;
+  String userName = AuthService().user?.displayName ?? "User";
+
   final TextEditingController controller = TextEditingController();
 
   Future<void> submitText() async {
@@ -37,7 +40,7 @@ class _GeminiScreenState extends State<GeminiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Gemini AI Story")),
+      appBar: AppBar(title: const Text("Gemini AI Story for")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
