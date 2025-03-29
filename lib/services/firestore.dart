@@ -33,7 +33,7 @@ class FirestoreService {
   }) async {
     try {
       if (uid.isNotEmpty) {
-        await db.collection('users').doc(uid).set({
+        await db.collection('quizzes').doc(uid).set({
           'dateTime': dateTime,
           'isStudent': isStudent,
           'educationLevel': educationLevel,
