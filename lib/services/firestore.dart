@@ -1,4 +1,3 @@
-import 'package:athena/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -53,7 +52,7 @@ class FirestoreService {
 
   Future<String> getChosenJob(String uid) async {
     try {
-      final docRef = db.collection("quizzes").doc(uid);
+      final docRef = db.collection("users").doc(uid);
       final doc = await docRef.get();
 
       if (!doc.exists) {
@@ -66,5 +65,17 @@ class FirestoreService {
       print("Error getting document: $e");
       return "Error: $e";
     }
+  }
+
+  void setChosenJob(String uid, String job) async {
+    print(uid);
+    print(job);
+    final docRef = db.collection("users").doc(uid);
+    docRef
+        .update({'chosenJob': job})
+        .then(
+          (value) => print("DocumentSnapshot successfully updated!"),
+          onError: (e) => print("Error updating document $e"),
+        );
   }
 }

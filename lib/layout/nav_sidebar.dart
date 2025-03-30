@@ -15,11 +15,16 @@ class NavSidebarLayout extends StatefulWidget {
 
 class _NavSidebarLayoutState extends State<NavSidebarLayout> {
   int selectedIndex = 0;
-  final List<Widget> screens = [const CoursesScreen(), const GeminiScreen(), const QuestionScreen(), const JobListingsScreen()];
+  final List<Widget> screens = [
+    const CoursesScreen(),
+    const GeminiScreen(),
+    const QuestionScreen(),
+    const JobListingsScreen(),
+  ];
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
     {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
-    {'title': "Question/Quizz", 'icon': Icon(Icons.smart_toy)},
+    {'title': "Quiz", 'icon': Icon(Icons.smart_toy)},
     {'title': "Job Listings", 'icon': Icon(Icons.list)},
   ];
 
@@ -29,9 +34,7 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
     final String uid = AuthService().user?.uid ?? "";
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Athena'),
-      ),
+      appBar: AppBar(title: const Text('Athena')),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
