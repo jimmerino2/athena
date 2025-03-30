@@ -1,4 +1,5 @@
 import 'package:athena/screens/questions/forms.dart';
+import 'package:athena/screens/questions/results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
@@ -89,6 +90,10 @@ class QuestionScreenState extends State<QuestionScreen>
     };
 
     logger.i("Submitted Answers: $result");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ResultsScreen(result: result)),
+    );
   }
 
   @override
@@ -174,7 +179,8 @@ class QuestionScreenState extends State<QuestionScreen>
           ),
           // Next/Submit Button
           ElevatedButton(
-            onPressed: _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
+            onPressed:
+                _currentPageIndex == _totalPages - 1 ? _submit : _nextPage,
             style: ElevatedButton.styleFrom(
               shape: const CircleBorder(),
               padding: const EdgeInsets.all(12),

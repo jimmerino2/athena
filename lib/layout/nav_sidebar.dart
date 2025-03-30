@@ -11,12 +11,17 @@ class NavSidebarLayout extends StatefulWidget {
 }
 
 class _NavSidebarLayoutState extends State<NavSidebarLayout> {
-  int selectedIndex = 2; //Switch to 2 for debugging purpose, default should be 0
-  final List<Widget> screens = [const CoursesScreen(), const GeminiScreen(), const QuestionScreen()];
+  int selectedIndex = 0;
+  final List<Widget> screens = [
+    const CoursesScreen(),
+    const GeminiScreen(),
+    const QuestionScreen(),
+  ];
+
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
     {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
-    {'title': "Question/Quizz", 'icon': Icon(Icons.smart_toy)},
+    {'title': "Quiz", 'icon': Icon(Icons.abc)},
   ];
 
   @override
