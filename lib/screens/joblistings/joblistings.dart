@@ -101,9 +101,10 @@ class JobListingRepository {
   }
 
   static Future<List<Job>> _fetchJobs() async {
-    final chosenJob = FirestoreService().getChosenJob(
+    final chosenJob = (await FirestoreService().getChosenJob(
       AuthService().user?.uid ?? "",
-    );
+    )).replaceAll(RegExp(r"\(|\/|\)| "), "-"); // Replace parenthesis, slashes and spaces with '-'
+
     final url = Uri.parse('https://www.seek.com.au/$chosenJob-jobs');
     // final url = Uri.parse('https://example.com');
     final response = await http.get(url);
@@ -239,7 +240,8 @@ class LargeJobCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(job.salary),
+                Expanded(child: Text(job.salary, overflow: TextOverflow.ellipsis)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
                 ElevatedButton(
                   onPressed:
                       () async => await launchUrl(
