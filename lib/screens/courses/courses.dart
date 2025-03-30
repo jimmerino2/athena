@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:athena/services/auth.dart';
+import 'package:athena/services/firestore.dart';
 import 'package:flutter/material.dart';
 // import 'package:athena/layout/bottom_nav.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -22,7 +24,12 @@ class Course {
   final String description;
   final String url;
 
-  Course({required this.title, required this.author, required this.description, required this.url});
+  Course({
+    required this.title,
+    required this.author,
+    required this.description,
+    required this.url,
+  });
 
   factory Course.fromList(List<String> list) => Course(
     title: list[0],
@@ -41,19 +48,26 @@ class CoursesRepository {
   static Future<List<Course>>? _courses;
 
   static Future<List<Course>> _fetchCourses() async {
-    String job = "Software Engineer";
-    String prompt = "Provide a list of REAL online courses a student interested in becoming a $job could take, in JSON format. The JSON should be an array of arrays, where each inner array represents a course and contains the following elements in order: Title, Author, Summary description, URL to the course. Do not add any comments";
+    String job = await FirestoreService().getChosenJob(
+      AuthService().user?.uid ?? "",
+    );
+    String prompt =
+        "Provide a list of REAL online courses a student interested in becoming a $job could take, in JSON format. The JSON should be an array of arrays, where each inner array represents a course and contains the following elements in order: Title, Author, Summary description, URL to the course. Do not add any comments";
     final content = [Content.text(prompt)];
     final response = await model.generateContent(content);
 
     // Regex: Find first '[', match until the first '`' (Captures JSON section). This is to ignore any additional text Gemini adds after the JSON.
-    Match? match = RegExp(r'(\[\s*[\s\S]*?)\s*(?=`)').firstMatch(response.text!);
+    Match? match = RegExp(
+      r'(\[\s*[\s\S]*?)\s*(?=`)',
+    ).firstMatch(response.text!);
 
-    if (match == null) { 
+    if (match == null) {
       return Future.error("Response text formatted incorrectly");
     }
     final jsonText = match.group(1)!.trim();
-    return (jsonDecode(jsonText) as List).map((e) => Course.fromList(List<String>.from(e))).toList();
+    return (jsonDecode(jsonText) as List)
+        .map((e) => Course.fromList(List<String>.from(e)))
+        .toList();
   }
 
   static Future<List<Course>> fetchCourses() {
@@ -78,7 +92,7 @@ class CoursesScreen extends StatefulWidget {
 class _CoursesScreenState extends State<CoursesScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column (
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -91,16 +105,17 @@ class _CoursesScreenState extends State<CoursesScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 20.0),
               child: IconButton(
-                onPressed: () => setState(() {
-                  CoursesRepository.refreshCourses();
-                }), 
-                icon: Icon(Icons.refresh)
-              )
-            )
+                onPressed:
+                    () => setState(() {
+                      CoursesRepository.refreshCourses();
+                    }),
+                icon: Icon(Icons.refresh),
+              ),
+            ),
           ],
         ),
         FutureBuilder(
-          future: CoursesRepository.fetchCourses(), 
+          future: CoursesRepository.fetchCourses(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -115,11 +130,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   itemBuilder: (context, index) {
                     Course course = courses[index];
                     return LargeCourseCard(course: course);
-                  }
+                  },
                 ),
               );
             }
-          }
+          },
         ),
       ],
     );
@@ -127,10 +142,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 }
 
 class LargeCourseCard extends StatelessWidget {
-  const LargeCourseCard({
-    super.key, 
-    required this.course,
-  });
+  const LargeCourseCard({super.key, required this.course});
 
   final Course course;
   // final String imageUrl;
@@ -142,7 +154,10 @@ class LargeCourseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            title: Text(course.title, style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              course.title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(course.author),
           ),
           Container(
@@ -151,7 +166,7 @@ class LargeCourseCard extends StatelessWidget {
               image: DecorationImage(
                 image: NetworkImage("https://placehold.co/600x400/png"),
                 fit: BoxFit.cover,
-              )
+              ),
             ),
           ),
           Padding(
@@ -163,10 +178,7 @@ class LargeCourseCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  onPressed: () {}, 
-                  icon: Icon(Icons.bookmark_border)
-                ),
+                IconButton(onPressed: () {}, icon: Icon(Icons.bookmark_border)),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
                 ElevatedButton(
                   // onPressed: () {},
@@ -175,7 +187,7 @@ class LargeCourseCard extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
