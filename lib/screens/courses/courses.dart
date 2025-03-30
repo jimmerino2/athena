@@ -52,7 +52,12 @@ class CoursesRepository {
       AuthService().user?.uid ?? "",
     );
     String prompt =
-        "Provide a list of REAL online courses a student interested in becoming a $job could take, in JSON format. The JSON should be an array of arrays, where each inner array represents a course and contains the following elements in order: Title, Author, Summary description, URL to the course. Do not add any comments";
+        """Provide a list of REAL online courses from reputable educational platforms, that a student interested in becoming a $job could take, in JSON format. 
+        The JSON should be an array of arrays, where each inner array represents a course and contains the following elements in order: 
+        Title, Author or Provider, Summary description, URL to the course.
+        Only provide courses that are verifiable as currently available. 
+        Do not add any comments.""";
+        
     final content = [Content.text(prompt)];
     final response = await model.generateContent(content);
 
