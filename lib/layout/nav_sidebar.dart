@@ -1,7 +1,10 @@
 import 'package:athena/screens/courses/courses.dart';
 import 'package:athena/screens/gemini_test/gemini.dart';
+import 'package:athena/screens/joblistings/joblistings.dart';
 import 'package:athena/screens/questions/questions.dart';
 import 'package:flutter/material.dart';
+import 'package:athena/services/auth.dart';
+import 'package:athena/services/firestore.dart';
 
 class NavSidebarLayout extends StatefulWidget {
   const NavSidebarLayout({super.key});
@@ -16,36 +19,49 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
     const CoursesScreen(),
     const GeminiScreen(),
     const QuestionScreen(),
+    const JobListingsScreen(),
   ];
-
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
     {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
-    {'title': "Quiz", 'icon': Icon(Icons.abc)},
+    {'title': "Quiz", 'icon': Icon(Icons.smart_toy)},
+    {'title': "Job Listings", 'icon': Icon(Icons.list)},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final String userName = AuthService().user?.displayName ?? "User";
+    final String uid = AuthService().user?.uid ?? "";
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Athena'),
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
+      appBar: AppBar(title: const Text('Athena')),
       drawer: Drawer(
         child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Athena'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Athena'),
+                  Text("Hello $userName"),
+                  FutureBuilder(
+                    future: FirestoreService().getChosenJob(uid),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+                      return Text("Chosen job: ${snapshot.data}");
+                    },
+                  ),
+                  ElevatedButton(
+                    onPressed: () async => await AuthService().signOut(),
+                    child: Text("Sign Out"),
+                  ),
+                ],
+              ),
             ),
             for (var item in selections.asMap().entries)
               ListTile(
