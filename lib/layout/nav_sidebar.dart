@@ -7,14 +7,23 @@ import 'package:athena/services/auth.dart';
 import 'package:athena/services/firestore.dart';
 
 class NavSidebarLayout extends StatefulWidget {
-  const NavSidebarLayout({super.key});
+  const NavSidebarLayout({super.key, this.index = 0, this.isNewLayout = false});
+  final int index;
+  final bool isNewLayout;
 
   @override
   _NavSidebarLayoutState createState() => _NavSidebarLayoutState();
 }
 
 class _NavSidebarLayoutState extends State<NavSidebarLayout> {
-  int selectedIndex = 0;
+  late int selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.isNewLayout ? widget.index : 0;
+  }
+
   final List<Widget> screens = [
     const CoursesScreen(),
     const GeminiScreen(),
@@ -71,8 +80,8 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                 onTap: () {
                   setState(() {
                     selectedIndex = item.key;
-                    Navigator.of(context).pop();
                   });
+                  Navigator.pop(context);
                 },
               ),
           ],
