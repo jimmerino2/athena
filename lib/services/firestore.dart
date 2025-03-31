@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:athena/screens/profile/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
@@ -77,5 +78,7 @@ class FirestoreService {
           (value) => print("DocumentSnapshot successfully updated!"),
           onError: (e) => print("Error updating document $e"),
         );
+
+    ProfileRepository().refreshProfile();
   }
 }

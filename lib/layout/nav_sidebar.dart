@@ -1,10 +1,10 @@
 import 'package:athena/screens/courses/courses.dart';
 import 'package:athena/screens/gemini_test/gemini.dart';
 import 'package:athena/screens/joblistings/joblistings.dart';
+import 'package:athena/screens/profile/profile.dart';
 import 'package:athena/screens/questions/questions.dart';
 import 'package:flutter/material.dart';
 import 'package:athena/services/auth.dart';
-import 'package:athena/services/firestore.dart';
 
 class NavSidebarLayout extends StatefulWidget {
   const NavSidebarLayout({super.key, this.index = 0, this.isNewLayout = false});
@@ -29,6 +29,7 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
     const GeminiScreen(),
     const QuestionScreen(),
     const JobListingsScreen(),
+    const ProfileScreen()
   ];
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
@@ -37,54 +38,97 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
     {'title': "Job Listings", 'icon': Icon(Icons.list)},
   ];
 
+  final int profileIndex = 4; // Temporary. Please update if adding new screens.
+
   @override
   Widget build(BuildContext context) {
-    final String userName = AuthService().user?.displayName ?? "User";
-    final String uid = AuthService().user?.uid ?? "";
+    ProfileRepository profile = ProfileRepository();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Athena')),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Stack(
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Athena'),
-                  Text("Hello $userName"),
-                  FutureBuilder(
-                    future: FirestoreService().getChosenJob(uid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      }
-                      return Text("Chosen job: ${snapshot.data}");
-                    },
+            ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  // decoration: BoxDecoration(color: Colors.blue),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('Athena', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0)),
+                      Spacer(),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 40.0,
+                            backgroundImage: NetworkImage(profile.photoUrl),
+                            backgroundColor: Colors.grey,
+                          ),
+                          SizedBox(width: 10.0,),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(profile.userName, style: TextStyle(fontSize: 18.0), overflow: TextOverflow.ellipsis),
+                                FutureBuilder(
+                                  future: profile.chosenJob,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Text("...", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0));
+                                    }
+                                    return Text("${snapshot.data}", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0), overflow: TextOverflow.ellipsis);
+                                  },
+                                ),      
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.settings_outlined),
+                            onPressed: () {
+                              setState(() {
+                                selectedIndex = profileIndex;
+                              });
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                      Spacer()
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () async => await AuthService().signOut(),
-                    child: Text("Sign Out"),
+                ),
+                for (var item in selections.asMap().entries)
+                  ListTile(
+                    leading: item.value['icon'],
+                    title: Text(item.value['title']),
+                    selected: selectedIndex == item.key,
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = item.key;
+                          });
+                      Navigator.pop(context);
+                },
+                  ),
+              ],
+            ),
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  const Divider(),
+                  ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text("Sign Out", style: TextStyle(fontWeight: FontWeight.bold)),
+                    onTap: () async => await AuthService().signOut(),
                   ),
                 ],
               ),
             ),
-            for (var item in selections.asMap().entries)
-              ListTile(
-                leading: item.value['icon'],
-                title: Text(item.value['title']),
-                selected: selectedIndex == item.key,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = item.key;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-          ],
+          ]
         ),
       ),
       body: screens[selectedIndex],
