@@ -31,6 +31,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             Ensure at least 2 jobs are not expected to prosper. 
             The individual has the following results in a quiz taken:
             ${widget.result}
+
             Order the jobs as the first being the most suitable based on the quiz results, while the last being the least.
             Ensure that the jobs recommended correlate to the quiz. 
 
@@ -161,7 +162,17 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      Navigator.pop(context);
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => NavSidebarLayout(
+                                                index: 2,
+                                                isNewLayout: true,
+                                              ),
+                                        ),
+                                        (route) => false,
+                                      );
                                     },
                                     child: Text("To Home"),
                                   ),

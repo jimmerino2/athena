@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 enum QuestionType {
   textField,
   dropdown,
@@ -50,11 +51,14 @@ class QuestionWidgetState extends State<QuestionWidget> {
       for (var option in widget.options!) {
         controllers[option] = TextEditingController(
           text:
-              (selectedAnswer is Map && selectedAnswer.containsKey(option))? selectedAnswer[option] : "",
+              (selectedAnswer is Map && selectedAnswer.containsKey(option))
+                  ? selectedAnswer[option]
+                  : "",
         );
       }
     }
 
+    /*
     @override
     void dispose() {
       _textController.dispose();
@@ -63,6 +67,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
       }
       super.dispose();
     }
+    */
   }
 
   @override
@@ -81,9 +86,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
             child: Text(
               widget.question,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24, 
-              ),
+              style: TextStyle(fontSize: 24),
             ),
           ),
           const SizedBox(height: 16),
@@ -100,7 +103,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
           children: [
             TextField(
               controller: _textController,
-              inputFormatters: widget.format, 
+              inputFormatters: widget.format,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 hintText: widget.hintText,
@@ -114,17 +117,21 @@ class QuestionWidgetState extends State<QuestionWidget> {
             ),
           ],
         );
+
       case QuestionType.dropdown:
         return DropdownButtonFormField<String>(
-          value: selectedAnswer,
+          value: (selectedAnswer is String) ? selectedAnswer : null,
           decoration: const InputDecoration(border: OutlineInputBorder()),
           items:
-              widget.options!.map((String option) {
-                return DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList(),
+              widget.options
+                  ?.map((option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  })
+                  .whereType<DropdownMenuItem<String>>()
+                  .toList(),
           onChanged: (String? value) {
             setState(() {
               selectedAnswer = value;
@@ -251,9 +258,8 @@ class QuestionWidgetState extends State<QuestionWidget> {
 
                       controllers.putIfAbsent(
                         title,
-                        () => TextEditingController(
-                          text: selectedAnswer[title],
-                        ),
+                        () =>
+                            TextEditingController(text: selectedAnswer[title]),
                       );
 
                       return ListTile(
@@ -310,15 +316,14 @@ class QuestionWidgetState extends State<QuestionWidget> {
                         icon: const Icon(
                           Icons.add_circle,
                           //color: Colors.green,
-                          ),
+                        ),
                         onPressed: () {
                           if (titleController.text.isNotEmpty) {
                             String newTitle = titleController.text.trim();
                             if (!selectedAnswer.containsKey(newTitle)) {
                               setState(() {
                                 selectedAnswer[newTitle] = "";
-                                controllers[newTitle] =
-                                    TextEditingController();
+                                controllers[newTitle] = TextEditingController();
                                 widget.onAnswerSelected(selectedAnswer);
                               });
                             }
@@ -343,9 +348,13 @@ class QuestionWidgetState extends State<QuestionWidget> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(100, 40),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    backgroundColor: selectedAnswer == "yes" ? Colors.blue : null,
-                    foregroundColor: selectedAnswer == "yes" ? Colors.white : Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor:
+                        selectedAnswer == "yes" ? Colors.blue : null,
+                    foregroundColor:
+                        selectedAnswer == "yes" ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
                     setState(() {
@@ -359,9 +368,13 @@ class QuestionWidgetState extends State<QuestionWidget> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(100, 40),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    backgroundColor: selectedAnswer == "no" ? Colors.blue : null,
-                    foregroundColor: selectedAnswer == "no" ? Colors.white : Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor:
+                        selectedAnswer == "no" ? Colors.blue : null,
+                    foregroundColor:
+                        selectedAnswer == "no" ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
                     setState(() {

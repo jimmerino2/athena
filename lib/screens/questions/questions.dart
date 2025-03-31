@@ -6,18 +6,13 @@ import 'package:logger/logger.dart';
 import 'dart:collection';
 
 final logger = Logger();
-List<String> hobbiesList = [
-  "Fishing",
-  "Coffee Making",
-  "Running",
-  "Drone Flying",
-];
+List<String> hobbiesList = ["Fishing", "Coffee Making", "Gyming", "Singing"];
 List<String> subjectList = [
-  "Math",
-  "Science",
   "English",
-  "Computer Science/ICT",
-  "Business",
+  "Science",
+  "Mathematics",
+  "Accounting",
+  "History",
 ];
 
 class QuestionScreen extends StatefulWidget {
@@ -31,7 +26,7 @@ class QuestionScreenState extends State<QuestionScreen>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
   int _currentPageIndex = 0;
-  final int _totalPages = 6;
+  int _totalPages = 5;
 
   // Answers
   final Map<int, dynamic> _answers = SplayTreeMap<int, dynamic>();
@@ -86,7 +81,13 @@ class QuestionScreenState extends State<QuestionScreen>
       "Education Level": _answers[2],
       "Subjects & Scores": _answers[3],
       "Hobbies & Interests": _answers[4],
-      "Dream": _answers[5],
+      "Work Environment": _answers[5],
+      "Role in Teams": _answers[6],
+      "Public Speaking": _answers[7],
+      "Skills": _answers[8],
+      "Priorities": _answers[9],
+      "Personality": _answers[10],
+      "Can take Pressure": _answers[11],
     };
 
     logger.i("Submitted Answers: $result");
@@ -98,6 +99,145 @@ class QuestionScreenState extends State<QuestionScreen>
 
   @override
   Widget build(BuildContext context) {
+    List<Map> inputs = [
+      {
+        'question': 'How old are you',
+        'type': QuestionType.textField,
+        'selected': (answer) => _answers[0] = answer,
+        'initial': _answers[0],
+        'hint': "Enter your age",
+        'format': [FilteringTextInputFormatter.digitsOnly],
+      },
+      {
+        'question': 'Are you a student',
+        'type': QuestionType.yesNo,
+        'selected': (answer) => _answers[1] = answer,
+        'initial': _answers[1],
+      },
+      {
+        'question': 'What is your education level',
+        'type': QuestionType.dropdown,
+        'selected': (answer) => _answers[2] = answer,
+        'initial': _answers[2],
+        'options': ['Primary', 'Secondary', 'Tertiary or Higher'],
+      },
+      {
+        'question': 'List your subjects and scores',
+        'type': QuestionType.multipleTextField,
+        'selected': (answer) {
+          setState(() {
+            _answers[3] = answer;
+          });
+        },
+        'initial': _answers[3],
+        'options': _answers[3]?.keys.toList() ?? [],
+        'hint': "Add new items here",
+      },
+      {
+        'question': 'How would you describe yourself',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Organized",
+          "Analytical",
+          "Creative",
+          "Energetic",
+          "Quiet",
+          "Adaptable",
+          "Independent",
+          "Ambitious",
+        ],
+        'selected': (answer) => _answers[10] = answer,
+        'initial': _answers[10],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'List your hobbies and interests',
+        'type': QuestionType.multipleChoice,
+        'options': hobbiesList,
+        'selected': (answer) => _answers[4] = answer,
+        'initial': _answers[4],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'What skills do you think you have',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Writing and communication",
+          "Logics and problem solving",
+          "Creativity and design",
+          "Leadership and shotcalling",
+        ],
+        'selected': (answer) => _answers[8] = answer,
+        'initial': _answers[8],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'Which role do you think suits you when working in teams',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "The leader or shotcaller",
+          "The mediator or the glue",
+          "The quiet genius",
+          "The creative thinker",
+        ],
+        'selected': (answer) => _answers[6] = answer,
+        'initial': _answers[6],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'What type of work environment do you enjoy',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Fast-paced and dynamic",
+          "Quiet and focused",
+          "Collaborative and team-based",
+          "Independent and flexible",
+        ],
+        'selected': (answer) => _answers[5] = answer,
+        'initial': _answers[5],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'Do you enjoy public speaking',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Very much",
+          "Yes but prefer small groups",
+          "No, I'm really shy",
+        ],
+        'selected': (answer) => _answers[7] = answer,
+        'initial': _answers[7],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'Can you do well under pressure',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Confidently yes",
+          "Yes, if managable",
+          "Not exactly",
+          "Not at all",
+        ],
+        'selected': (answer) => _answers[11] = answer,
+        'initial': _answers[11],
+        'hint': "Add new items here.",
+      },
+      {
+        'question': 'What is most important to you when finding jobs',
+        'type': QuestionType.multipleChoice,
+        'options': [
+          "Salary and income",
+          "Work life balance",
+          "Passion and interests",
+          "Leadership opportunities",
+        ],
+        'selected': (answer) => _answers[9] = answer,
+        'initial': _answers[9],
+        'hint': "Add new items here.",
+      },
+    ];
+    _totalPages = inputs.length;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Questions')),
       body: Stack(
@@ -106,54 +246,17 @@ class QuestionScreenState extends State<QuestionScreen>
           PageView(
             controller: _pageViewController,
             children: <Widget>[
-              QuestionWidget(
-                question: "What is your age",
-                type: QuestionType.textField,
-                onAnswerSelected: (answer) => _answers[0] = answer,
-                initialAnswer: _answers[0],
-                hintText: "Enter your age",
-                format: [FilteringTextInputFormatter.digitsOnly],
-              ),
-              QuestionWidget(
-                question: "Are you a student",
-                type: QuestionType.yesNo,
-                onAnswerSelected: (answer) => _answers[1] = answer,
-                initialAnswer: _answers[1],
-              ),
-              QuestionWidget(
-                question: "What is your education level",
-                type: QuestionType.textField,
-                onAnswerSelected: (answer) => _answers[2] = answer,
-                initialAnswer: _answers[2],
-                hintText: "Enter your education level",
-              ),
-              QuestionWidget(
-                question: "List your subject and scores",
-                type: QuestionType.multipleTextField,
-                options: _answers[3]?.keys.toList() ?? [],
-                onAnswerSelected: (answer) {
-                  setState(() {
-                    _answers[3] = answer;
-                  });
-                },
-                initialAnswer: _answers[3],
-                hintText: "Add new subjects here",
-              ),
-              QuestionWidget(
-                question: "List your hobbies and interest",
-                type: QuestionType.multipleChoice,
-                options: hobbiesList,
-                onAnswerSelected: (answer) => _answers[4] = answer,
-                initialAnswer: _answers[4],
-                hintText: "Add new hobbies/interest here",
-              ),
-              QuestionWidget(
-                question: "What is your dream",
-                type: QuestionType.textField,
-                onAnswerSelected: (answer) => _answers[5] = answer,
-                initialAnswer: _answers[5],
-                hintText: "Enter your dream",
-              ),
+              for (var item in inputs)
+                QuestionWidget(
+                  question: item['question'],
+                  type: item['type'],
+                  onAnswerSelected: item['selected'],
+                  initialAnswer:
+                      item.containsKey('initial') ? item['initial'] : null,
+                  hintText: item.containsKey('hint') ? item['hint'] : null,
+                  format: item.containsKey('format') ? item['format'] : [],
+                  options: item.containsKey('options') ? item['options'] : [],
+                ),
             ],
           ),
           navigationButtons(),
