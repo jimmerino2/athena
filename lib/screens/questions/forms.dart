@@ -123,7 +123,6 @@ class QuestionWidgetState extends State<QuestionWidget> {
           ],
         );
 
-
       case QuestionType.dropdown:
         return DropdownButtonFormField<String>(
           value: (selectedAnswer is String) ? selectedAnswer : null,
