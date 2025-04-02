@@ -274,6 +274,7 @@ class QuestionScreenState extends State<QuestionScreen>
 
   @override
   Widget build(BuildContext context) {
+    logger.i("Initial Answers: $_answers");
     return Scaffold(
       appBar: AppBar(title: const Text('Questions')),
       body: Stack(
@@ -287,8 +288,8 @@ class QuestionScreenState extends State<QuestionScreen>
                   question: item['question'],
                   type: item['type'],
                   onAnswerSelected: item['selected'],
-                  initialAnswer:
-                      item.containsKey('initial') ? item['initial'] : null,
+                  // initialAnswer: item.containsKey('initial') ? item['initial'] : null,
+                  initialAnswer: _answers[inputs.indexOf(item)] ?? '', 
                   hintText: item.containsKey('hint') ? item['hint'] : null,
                   format: item.containsKey('format') ? item['format'] : [],
                   options: item.containsKey('options') ? item['options'] : [],
