@@ -17,6 +17,7 @@ class QuestionWidget extends StatefulWidget {
   final dynamic initialAnswer;
   final String? hintText;
   final List<TextInputFormatter>? format;
+  final bool required;
 
   const QuestionWidget({
     super.key,
@@ -27,6 +28,7 @@ class QuestionWidget extends StatefulWidget {
     this.initialAnswer,
     this.hintText,
     this.format,
+    this.required = false,
   });
 
   @override
@@ -37,6 +39,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
   dynamic selectedAnswer;
   late TextEditingController _textController;
   Map<String, TextEditingController> controllers = {};
+  String? _errorText;
 
   @override
   void initState() {
@@ -107,16 +110,19 @@ class QuestionWidgetState extends State<QuestionWidget> {
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 hintText: widget.hintText,
+                errorText: _errorText,
               ),
               onChanged: (value) {
                 setState(() {
                   selectedAnswer = value;
+                  _errorText = value.isEmpty ? "This field is required" : null;
                 });
                 widget.onAnswerSelected(value);
               },
             ),
           ],
         );
+
 
       case QuestionType.dropdown:
         return DropdownButtonFormField<String>(
