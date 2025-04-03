@@ -3,6 +3,7 @@ import 'package:athena/screens/gemini_test/gemini.dart';
 import 'package:athena/screens/joblistings/joblistings.dart';
 import 'package:athena/screens/profile/profile.dart';
 import 'package:athena/screens/questions/questions.dart';
+import 'package:athena/screens/resume/resume.dart';
 import 'package:flutter/material.dart';
 import 'package:athena/services/auth.dart';
 
@@ -29,16 +30,18 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
     const GeminiScreen(),
     const QuestionScreen(),
     const JobListingsScreen(),
-    const ProfileScreen()
+    const ResumeScreen(),
+    const ProfileScreen(),
   ];
   List<Map<String, dynamic>> selections = [
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
     {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
     {'title': "Quiz", 'icon': Icon(Icons.smart_toy)},
     {'title': "Job Listings", 'icon': Icon(Icons.list)},
+    {'title': "Resume Review", 'icon': Icon(Icons.list)},
   ];
 
-  final int profileIndex = 4; // Temporary. Please update if adding new screens.
+  final int profileIndex = 5; // Temporary. Please update if adding new screens.
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,13 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Athena', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0)),
+                      Text(
+                        'Athena',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20.0,
+                        ),
+                      ),
                       Spacer(),
                       Row(
                         children: [
@@ -66,21 +75,39 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                             backgroundImage: NetworkImage(profile.photoUrl),
                             backgroundColor: Colors.grey,
                           ),
-                          SizedBox(width: 10.0,),
+                          SizedBox(width: 10.0),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(profile.userName, style: TextStyle(fontSize: 18.0), overflow: TextOverflow.ellipsis),
+                                Text(
+                                  profile.userName,
+                                  style: TextStyle(fontSize: 18.0),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 FutureBuilder(
                                   future: profile.chosenJob,
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Text("...", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0));
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Text(
+                                        "...",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 14.0,
+                                        ),
+                                      );
                                     }
-                                    return Text("${snapshot.data}", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 14.0), overflow: TextOverflow.ellipsis);
+                                    return Text(
+                                      "${snapshot.data}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14.0,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    );
                                   },
-                                ),      
+                                ),
                               ],
                             ),
                           ),
@@ -92,10 +119,10 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                               });
                               Navigator.pop(context);
                             },
-                          )
+                          ),
                         ],
                       ),
-                      Spacer()
+                      Spacer(),
                     ],
                   ),
                 ),
@@ -107,9 +134,9 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                     onTap: () {
                       setState(() {
                         selectedIndex = item.key;
-                          });
+                      });
                       Navigator.pop(context);
-                },
+                    },
                   ),
               ],
             ),
@@ -122,13 +149,16 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
                   const Divider(),
                   ListTile(
                     leading: Icon(Icons.logout),
-                    title: Text("Sign Out", style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text(
+                      "Sign Out",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     onTap: () async => await AuthService().signOut(),
                   ),
                 ],
               ),
             ),
-          ]
+          ],
         ),
       ),
       body: screens[selectedIndex],
