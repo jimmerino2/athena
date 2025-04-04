@@ -44,7 +44,6 @@ class QuestionWidgetState extends State<QuestionWidget> {
   @override
   void initState() {
     super.initState();
-    // selectedAnswer = widget.initialAnswer;
     selectedAnswer = widget.initialAnswer ?? {};
     _textController = TextEditingController(
       text: widget.initialAnswer?.toString() ?? "",
@@ -153,6 +152,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
           selectedAnswer = <String>{};
         }
 
+        // Check for initial answer
         if (selectedAnswer.isEmpty && widget.initialAnswer != null) {
           if (widget.initialAnswer is String) {
             if (widget.initialAnswer.isNotEmpty) {
@@ -250,7 +250,8 @@ class QuestionWidgetState extends State<QuestionWidget> {
           builder: (context, setState) {
             selectedAnswer ??= {};
 
-            if (widget.options != null) {
+            // Replace subjects if all filled in
+            if (selectedAnswer.isEmpty) {
               for (var title in widget.options!) {
                 selectedAnswer.putIfAbsent(
                   title,
