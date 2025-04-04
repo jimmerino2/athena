@@ -52,7 +52,6 @@ class QuestionScreenState extends State<QuestionScreen>
         'question': 'How old are you',
         'type': QuestionType.textField,
         'selected': (answer) => _answers[0] = answer,
-        'initial': _answers[0],
         'hint': "Enter your age",
         'format': [FilteringTextInputFormatter.digitsOnly],
       },
@@ -60,13 +59,11 @@ class QuestionScreenState extends State<QuestionScreen>
         'question': 'Are you a student',
         'type': QuestionType.yesNo,
         'selected': (answer) => _answers[1] = answer,
-        'initial': _answers[1],
       },
       {
         'question': 'What is your education level',
         'type': QuestionType.dropdown,
         'selected': (answer) => _answers[2] = answer,
-        'initial': _answers[2],
         'options': ['Primary', 'Secondary', 'Tertiary or Higher'],
         'optional': true,
       },
@@ -78,7 +75,6 @@ class QuestionScreenState extends State<QuestionScreen>
             _answers[3] = answer;
           });
         },
-        'initial': _answers[3],
         'options': _answers[3]?.keys.toList() ?? [],
         'hint': "Add new items here",
         'optional': true,
@@ -96,16 +92,14 @@ class QuestionScreenState extends State<QuestionScreen>
           "Independent",
           "Ambitious",
         ],
-        'selected': (answer) => _answers[10] = answer,
-        'initial': _answers[10],
+        'selected': (answer) => _answers[4] = answer,
         'hint': "Add new items here.",
       },
       {
         'question': 'List your hobbies and interests',
         'type': QuestionType.multipleChoice,
         'options': hobbiesList,
-        'selected': (answer) => _answers[4] = answer,
-        'initial': _answers[4],
+        'selected': (answer) => _answers[5] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -117,8 +111,7 @@ class QuestionScreenState extends State<QuestionScreen>
           "Creativity and design",
           "Leadership and shotcalling",
         ],
-        'selected': (answer) => _answers[8] = answer,
-        'initial': _answers[8],
+        'selected': (answer) => _answers[6] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -130,8 +123,7 @@ class QuestionScreenState extends State<QuestionScreen>
           "The quiet genius",
           "The creative thinker",
         ],
-        'selected': (answer) => _answers[6] = answer,
-        'initial': _answers[6],
+        'selected': (answer) => _answers[7] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -143,8 +135,7 @@ class QuestionScreenState extends State<QuestionScreen>
           "Collaborative and team-based",
           "Independent and flexible",
         ],
-        'selected': (answer) => _answers[5] = answer,
-        'initial': _answers[5],
+        'selected': (answer) => _answers[8] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -155,8 +146,7 @@ class QuestionScreenState extends State<QuestionScreen>
           "Yes but prefer small groups",
           "No, I'm really shy",
         ],
-        'selected': (answer) => _answers[7] = answer,
-        'initial': _answers[7],
+        'selected': (answer) => _answers[9] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -168,8 +158,7 @@ class QuestionScreenState extends State<QuestionScreen>
           "Not exactly",
           "Not at all",
         ],
-        'selected': (answer) => _answers[11] = answer,
-        'initial': _answers[11],
+        'selected': (answer) => _answers[10] = answer,
         'hint': "Add new items here.",
       },
       {
@@ -181,9 +170,14 @@ class QuestionScreenState extends State<QuestionScreen>
           "Passion and interests",
           "Leadership opportunities",
         ],
-        'selected': (answer) => _answers[9] = answer,
-        'initial': _answers[9],
+        'selected': (answer) => _answers[11] = answer,
         'hint': "Add new items here.",
+      },
+      {
+        'question': 'What industry are you interested in\n(optional)',
+        'type': QuestionType.textField,
+        'selected': (answer) => _answers[12] = answer,
+        'hint': "Optional Question",
       },
     ];
     _totalPages = inputs.length;
@@ -196,6 +190,7 @@ class QuestionScreenState extends State<QuestionScreen>
   }
 
   void _nextPage() {
+    print(_answers);
     if (_currentPageIndex < _totalPages - 1) {
       int nextPage = _currentPageIndex + 1;
       if (_currentPageIndex == 1 && _answers[1] == "no") {
@@ -254,14 +249,15 @@ class QuestionScreenState extends State<QuestionScreen>
       "Student": _answers[1],
       "Education Level": _answers[2],
       "Subjects & Scores": _answers[3],
-      "Hobbies & Interests": _answers[4],
-      "Work Environment": _answers[5],
-      "Role in Teams": _answers[6],
-      "Public Speaking": _answers[7],
-      "Skills": _answers[8],
-      "Priorities": _answers[9],
-      "Personality": _answers[10],
-      "Can take Pressure": _answers[11],
+      "Personality": _answers[4],
+      "Hobbies & Interests": _answers[5],
+      "Skills": _answers[6],
+      "Role in Teams": _answers[7],
+      "Work Environment": _answers[8],
+      "Public Speaking": _answers[9],
+      "Can take Pressure": _answers[10],
+      "Priorities": _answers[11],
+      "Industry": _answers[12],
     };
 
     logger.i("Results: $result");
@@ -287,8 +283,7 @@ class QuestionScreenState extends State<QuestionScreen>
                   question: item['question'],
                   type: item['type'],
                   onAnswerSelected: item['selected'],
-                  initialAnswer:
-                      item.containsKey('initial') ? item['initial'] : null,
+                  initialAnswer: _answers[inputs.indexOf(item)] ?? '',
                   hintText: item.containsKey('hint') ? item['hint'] : null,
                   format: item.containsKey('format') ? item['format'] : [],
                   options: item.containsKey('options') ? item['options'] : [],

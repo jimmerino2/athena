@@ -44,11 +44,10 @@ class QuestionWidgetState extends State<QuestionWidget> {
   @override
   void initState() {
     super.initState();
-    selectedAnswer = widget.initialAnswer;
+    selectedAnswer = widget.initialAnswer ?? {};
     _textController = TextEditingController(
       text: widget.initialAnswer?.toString() ?? "",
     );
-    selectedAnswer = widget.initialAnswer ?? {};
 
     if (widget.options != null) {
       for (var option in widget.options!) {
@@ -124,19 +123,22 @@ class QuestionWidgetState extends State<QuestionWidget> {
         );
 
       case QuestionType.dropdown:
+        String? validAnswer =
+            (selectedAnswer is String &&
+                    widget.options?.contains(selectedAnswer) == true)
+                ? selectedAnswer
+                : null;
+
         return DropdownButtonFormField<String>(
-          value: (selectedAnswer is String) ? selectedAnswer : null,
+          value: validAnswer,
           decoration: const InputDecoration(border: OutlineInputBorder()),
           items:
-              widget.options
-                  ?.map((option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  })
-                  .whereType<DropdownMenuItem<String>>()
-                  .toList(),
+              widget.options?.toSet().map((option) {
+                return DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                );
+              }).toList(),
           onChanged: (String? value) {
             setState(() {
               selectedAnswer = value;
@@ -149,9 +151,24 @@ class QuestionWidgetState extends State<QuestionWidget> {
         if (selectedAnswer is! Set<String>) {
           selectedAnswer = <String>{};
         }
+
+        // Check for initial answer
+        if (selectedAnswer.isEmpty && widget.initialAnswer != null) {
+          if (widget.initialAnswer is String) {
+            if (widget.initialAnswer.isNotEmpty) {
+              selectedAnswer.add(widget.initialAnswer);
+            }
+          } else if (widget.initialAnswer is Iterable<String>) {
+            selectedAnswer.addAll(
+              widget.initialAnswer.where((item) => item.isNotEmpty),
+            );
+          }
+        }
+
         return StatefulBuilder(
           builder: (context, setState) {
             TextEditingController optionController = TextEditingController();
+
             return Column(
               children: [
                 Padding(
@@ -233,7 +250,8 @@ class QuestionWidgetState extends State<QuestionWidget> {
           builder: (context, setState) {
             selectedAnswer ??= {};
 
-            if (widget.options != null) {
+            // Replace subjects if all filled in
+            if (selectedAnswer.isEmpty) {
               for (var title in widget.options!) {
                 selectedAnswer.putIfAbsent(
                   title,
