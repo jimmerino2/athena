@@ -1,3 +1,4 @@
+import 'package:athena/screens/gemini_test/gemini.dart';
 import 'package:athena/screens/questions/questions.dart';
 import 'package:athena/screens/home/home.dart';
 import 'package:athena/screens/login/login.dart';
@@ -14,4 +15,5 @@ var appRoutes = {
   "/questions": (context) => const QuestionScreen(),
   "/updates": (context) => const UpdatesScreen(),
   "/saved": (context) => const SavedScreen(),
+  "/gemini": (context) => const GeminiScreen(),
 };
