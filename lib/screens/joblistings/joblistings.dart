@@ -1,3 +1,4 @@
+import 'package:athena/screens/interviw/interview.dart';
 import 'package:athena/services/auth.dart';
 import 'package:athena/services/firestore.dart';
 import 'package:flutter/material.dart';
@@ -241,6 +242,19 @@ class LargeJobCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: Text(job.salary, overflow: TextOverflow.ellipsis)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
+                ElevatedButton(
+                  onPressed:
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InterviewScreen(job: job),
+                          ),
+                        );
+                      },
+                  child: Text("Interview"),
+                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
                 ElevatedButton(
                   onPressed:
