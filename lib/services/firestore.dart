@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:athena/screens/courses/courses.dart';
+import 'package:athena/screens/joblistings/joblistings.dart';
 import 'package:athena/screens/profile/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -80,5 +82,7 @@ class FirestoreService {
         );
 
     ProfileRepository().refreshProfile();
+    JobListingRepository.refreshJobListing();
+    CoursesRepository.refreshCourses();
   }
 }
