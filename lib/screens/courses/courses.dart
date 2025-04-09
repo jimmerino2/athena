@@ -198,3 +198,51 @@ class LargeCourseCard extends StatelessWidget {
     );
   }
 }
+
+class SmallCourseCard extends StatelessWidget {
+  const SmallCourseCard({super.key, required this.course});
+
+  final Course course;
+  // final String imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16), // Card's rounded corners
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: SizedBox(
+              width: 260,
+              child: Column(
+                spacing: 4,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(course.title, style: TextStyle(fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis ),
+                  Text("By: ${course.author}", overflow: TextOverflow.ellipsis )
+                ]
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(16),  // Round top-right corner
+                bottomRight: Radius.circular(16),  // Round bottom-right corner
+              ),
+              child: Image.network("https://placehold.co/200x200/png", fit: BoxFit.cover)
+            )
+            
+          )
+        ],
+      ),
+    );
+  }
+}

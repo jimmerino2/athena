@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:athena/screens/courses/courses.dart';
 import 'package:athena/screens/gemini_test/gemini.dart';
+import 'package:athena/screens/home/home.dart';
 import 'package:athena/screens/joblistings/joblistings.dart';
 import 'package:athena/screens/profile/profile.dart';
 import 'package:athena/screens/questions/questions.dart';
@@ -13,7 +16,7 @@ class NavSidebarLayout extends StatefulWidget {
   final bool isNewLayout;
 
   @override
-  _NavSidebarLayoutState createState() => _NavSidebarLayoutState();
+  State<NavSidebarLayout> createState() => _NavSidebarLayoutState();
 }
 
 class _NavSidebarLayoutState extends State<NavSidebarLayout> {
@@ -23,22 +26,28 @@ class _NavSidebarLayoutState extends State<NavSidebarLayout> {
   void initState() {
     super.initState();
     selectedIndex = widget.isNewLayout ? widget.index : 0;
+    if (AuthService.isNew) {
+      selectedIndex = 4;
+      AuthService.isNew = false;
+    }
   }
 
   final List<Widget> screens = [
+    const HomeScreen(),
     const CoursesScreen(),
-    const GeminiScreen(),
-    const QuestionScreen(),
+    // const GeminiScreen(),
     const JobListingsScreen(),
     const ResumeScreen(),
+    const QuestionScreen(),
     const ProfileScreen(),
   ];
   List<Map<String, dynamic>> selections = [
+    {'title': "Home", 'icon': Icon(Icons.home)},
     {'title': "Courses", 'icon': Icon(Icons.library_books)},
-    {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
-    {'title': "Quiz", 'icon': Icon(Icons.smart_toy)},
+    // {'title': "Gemini Test", 'icon': Icon(Icons.smart_toy)},
+    // {'title': "Quiz", 'icon': Icon(Icons.question_mark_rounded)},
     {'title': "Job Listings", 'icon': Icon(Icons.list)},
-    {'title': "Resume Review", 'icon': Icon(Icons.list)},
+    {'title': "Resume Review", 'icon': Icon(Icons.contact_page)},
   ];
 
   final int profileIndex = 5; // Temporary. Please update if adding new screens.

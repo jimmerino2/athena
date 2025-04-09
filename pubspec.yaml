@@ -72,6 +72,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/icon.png
+    - assets/images/icon2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -101,8 +102,8 @@ flutter:
 
 flutter_native_splash:
   color: "#ffffff" # Background color
-  image: assets/images/icon.png # Path to your splash image
+  image: assets/images/icon2.png # Path to your splash image
   android_12:
-    image: assets/images/icon.png
+    image: assets/images/icon2.png
     color: "#ffffff"
   fullscreen: true

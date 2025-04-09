@@ -160,7 +160,7 @@ class QuestionWidgetState extends State<QuestionWidget> {
             }
           } else if (widget.initialAnswer is Iterable<String>) {
             selectedAnswer.addAll(
-              widget.initialAnswer.where((item) => item.isNotEmpty),
+              (widget.initialAnswer as Iterable<String>).where((item) => item.isNotEmpty),
             );
           }
         }

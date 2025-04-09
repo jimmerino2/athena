@@ -6,6 +6,8 @@ class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
   final user = FirebaseAuth.instance.currentUser;
 
+  static bool isNew = false;
+
   Future<void> anonLogin() async {
     try {
       await FirebaseAuth.instance.signInAnonymously();
@@ -16,6 +18,7 @@ class AuthService {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
   }
 
   Future<void> googleLogin() async {
@@ -30,12 +33,14 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(authCredential);
+      final userCred = await FirebaseAuth.instance.signInWithCredential(authCredential);
 
       FirestoreService().addUser(
-        FirebaseAuth.instance.currentUser!.uid,
-        FirebaseAuth.instance.currentUser!.displayName!,
+        userCred.user!.uid,
+        userCred.user!.displayName!,
       );
+
+      isNew = true;
     } on FirebaseAuthException catch (e) {
       // handle error
     }
