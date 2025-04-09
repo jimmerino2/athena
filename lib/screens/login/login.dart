@@ -15,8 +15,7 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Spacer(flex: 3),
-            // const FlutterLogo(size: 150),
-            Image.asset('assets/images/icon.png', height: 100),
+            Image.asset('assets/images/icon2.png', height: 100),
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(
@@ -39,14 +38,14 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             Spacer(flex: 3),
-            Flexible(
-              child: LoginButton(
-                color: Colors.deepPurple,
-                icon: FontAwesomeIcons.userNinja,
-                text: 'Continue as guest',
-                loginMethod: AuthService().anonLogin,
-              ),
-            ),
+            // Flexible(
+            //   child: LoginButton(
+            //     color: Colors.deepPurple,
+            //     icon: FontAwesomeIcons.userNinja,
+            //     text: 'Continue as guest',
+            //     loginMethod: AuthService().anonLogin,
+            //   ),
+            // ),
             Flexible(
               child: LoginButton(
                 text: 'Sign in with Google',
