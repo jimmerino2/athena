@@ -105,7 +105,7 @@ class JobListingRepository {
       AuthService().user?.uid ?? "",
     )).replaceAll(RegExp(r"\(|\/|\)| "), "-"); // Replace parenthesis, slashes and spaces with '-'
 
-    final url = Uri.parse('https://www.seek.com.au/$chosenJob-jobs');
+    final url = Uri.parse('https://www.seek.com.au/$chosenJob-jobs/in-Malaysia');
     // final url = Uri.parse('https://example.com');
     final response = await http.get(url);
 
@@ -175,7 +175,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
                   itemBuilder: (context, index) {
                     Job job = jobs[index];
                     return Column(
-                      children: [LargeJobCard(job: job), SizedBox(height: 20)],
+                      children: [DetailedJobCard(job: job), SizedBox(height: 20)],
                     );
                   },
                 ),
@@ -188,8 +188,8 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
   }
 }
 
-class LargeJobCard extends StatelessWidget {
-  const LargeJobCard({super.key, required this.job});
+class DetailedJobCard extends StatelessWidget {
+  const DetailedJobCard({super.key, required this.job});
 
   final Job job;
 
@@ -249,6 +249,67 @@ class LargeJobCard extends StatelessWidget {
                       ),
                   child: Text("Open"),
                 ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SimpleJobCard extends StatelessWidget {
+  const SimpleJobCard({super.key, required this.job});
+
+  final Job job;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    // border: Border.all(),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image: NetworkImage(job.logoUrl)),
+                  ),
+                ),
+                SizedBox(width: 8.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.title,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      Text(job.company, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+                // Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [Text(job.age), Text(job.location)],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(child: Text(job.salary, overflow: TextOverflow.ellipsis)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
               ],
             ),
           ],
